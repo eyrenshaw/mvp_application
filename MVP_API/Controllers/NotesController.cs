@@ -11,7 +11,7 @@ namespace MVP_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "SubjectNames")]
+   // [Authorize(Policy = "SubjectNames")]
     public class NotesController : ControllerBase
     {
         private readonly IRepository _repository;
