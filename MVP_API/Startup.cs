@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,10 +30,22 @@ namespace MVP_API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddMemoryCache();
+
+            var host = Environment.GetEnvironmentVariable("MONGODB_SERVICE_HOST", EnvironmentVariableTarget.Machine);
+            var port = Environment.GetEnvironmentVariable("MONGODB_SERVICE_PORT", EnvironmentVariableTarget.Machine);
+
+            var enumerator = Environment.GetEnvironmentVariables().GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Console.WriteLine($"{enumerator.Key,5}:{enumerator.Value,100}");
+            }
+
+
+            //mongodb://locahost:27017
             services.Configure<DbSetting>(options =>
             {
-                options.ConnectionString = Configuration.GetSection("database:connectionString").Value;
-                options.DatabaseName = Configuration.GetSection("database:databaseName").Value;
+                options.ConnectionString = $"mongodb://{host}:{port}";
+                //options.DatabaseName = Configuration.GetSection("database:databaseName").Value;
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
